@@ -27,7 +27,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 /*
  *  @项目名：  ShopCartViewLib 
  *  @包名：    androidbus.com.shopcartlib
@@ -55,10 +54,7 @@ public class ShopCartView extends View {
     private float mNumTextSize;
     private int mMaxCount;
     private int mCount;
-    /**
-     * 是否需要显示hint提示文本
-     */
-    private boolean mIgnoreHintArea;
+    private boolean mIgnoreHintArea;//是否需要显示hint提示文本
     private String mHintText;
     private int mHintBgColor;
     private int mHintFgColor;
@@ -102,7 +98,7 @@ public class ShopCartView extends View {
     private View endView;
 
     public ShopCartView(Context context) {
-	this(context, null);
+	this(context, null);//用于在构造方法中引用满足指定参数类型的构造器（其实也就是构造方法）。但是这里必须非常注意：只能引用一个构造方法且必须位于开始
     }
 
     public ShopCartView(Context context, AttributeSet attrs) {
@@ -123,6 +119,7 @@ public class ShopCartView extends View {
 	initUIByCount();
     }
 
+    //根据初始设定值显示相应界面
     private void initUIByCount() {
 	if (mCount == 0) {
 	    showHintMode = true;
@@ -138,27 +135,15 @@ public class ShopCartView extends View {
     }
 
     private void cancelAnim() {
-	if (mHintExpandAnim != null && mHintExpandAnim.isRunning()) {
-	    mHintExpandAnim.cancel();
-	}
-
-	if (mHintClospAnim != null && mHintClospAnim.isRunning()) {
-	    mHintClospAnim.cancel();
-	}
-
-	if (mDelExpandAnim != null && mDelExpandAnim.isRunning()) {
-	    mDelExpandAnim.cancel();
-	}
-
-	if (mDelClospAnim != null && mDelClospAnim.isRunning()) {
-	    mDelClospAnim.cancel();
-	}
+	if (mHintExpandAnim != null && mHintExpandAnim.isRunning()) mHintExpandAnim.cancel();
+	if (mHintClospAnim != null && mHintClospAnim.isRunning()) mHintClospAnim.cancel();
+	if (mDelExpandAnim != null && mDelExpandAnim.isRunning()) mDelExpandAnim.cancel();
+	if (mDelClospAnim != null && mDelClospAnim.isRunning()) mDelClospAnim.cancel();
     }
 
     private void initPaint() {
 	mHintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	mHintPaint.setStyle(Paint.Style.FILL);
-
 	mHintTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	mHintTextPaint.setStyle(Paint.Style.FILL);
 	mHintTextPaint.setTextSize(mHintTextSize);
@@ -170,31 +155,20 @@ public class ShopCartView extends View {
 	mReplenshTextPaint.setColor(mReplenishTextColor);
 
 	mAddPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	if (mIsAddFillMode) {
-	    mAddPaint.setStyle(Paint.Style.FILL);
-	} else {
-	    mAddPaint.setStyle(Paint.Style.STROKE);
-	}
-
+	if (mIsAddFillMode) mAddPaint.setStyle(Paint.Style.FILL);
+	else mAddPaint.setStyle(Paint.Style.STROKE);
 	mDelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-	if (mIsDelFillMode) {
-	    mDelPaint.setStyle(Paint.Style.FILL);
-	} else {
-	    mDelPaint.setStyle(Paint.Style.STROKE);
-	}
-
+	if (mIsDelFillMode) mDelPaint.setStyle(Paint.Style.FILL);
+	else mDelPaint.setStyle(Paint.Style.STROKE);
 	mNumPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	mNumPaint.setStyle(Paint.Style.FILL);
 	mNumPaint.setTextSize(mNumTextSize);
 	mNumPaint.setColor(mReplenishTextColor);
-
 	mAddRegion = new Region();
 	mDelRegion = new Region();
 	mAddPath = new Path();
 	mDelPath = new Path();
-
-	//初始化动画属性
-	//减少按钮的伸展动画
+	//初始化动画属性,减少按钮的伸展动画
 	mDelExpandAnim = ValueAnimator.ofFloat(1, 0);
 	mDelExpandAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 	    @Override
@@ -220,24 +194,17 @@ public class ShopCartView extends View {
 		invalidate();
 	    }
 	});
-	mHintExpandAnim.setDuration(mIgnoreHintArea
-				    ? 0
-				    : mPerAnimDuration);
+	mHintExpandAnim.setDuration(mIgnoreHintArea ? 0 : mPerAnimDuration);
 	mHintExpandAnim.addListener(new AnimatorListenerAdapter() {
 	    @Override
 	    public void onAnimationStart(Animator animation) {
 		//提示语扩展动画开始时要显示提示语背景
-		if (mCount == 0) {
-		    showHintMode = true;
-		}
+		if (mCount == 0) showHintMode = true;
 	    }
-
 	    @Override
 	    public void onAnimationEnd(Animator animation) {
 		//提示语扩展动画结束时要显示提示语文本
-		if (mCount == 0) {
-		    showHintText = true;
-		}
+		if (mCount == 0) showHintText = true;
 	    }
 	});
 
@@ -255,9 +222,7 @@ public class ShopCartView extends View {
 	    @Override
 	    public void onAnimationStart(Animator animation) {
 		//提示语收缩动画开始时先隐藏提示语文本
-		if (mCount > 0) {
-		    showHintText = false;
-		}
+		if (mCount > 0) showHintText = false;
 	    }
 
 	    @Override
@@ -266,13 +231,10 @@ public class ShopCartView extends View {
 		if (mCount > 0) {
 		    showHintMode = false;
 		    //提示语收缩动画结束时开启减少按钮扩展动画
-		    if (mDelExpandAnim != null && !mDelExpandAnim.isRunning()) {
-			mDelExpandAnim.start();
-		    }
+		    if (mDelExpandAnim != null && !mDelExpandAnim.isRunning()) mDelExpandAnim.start();
 		}
 	    }
 	});
-
 
 	//减少按钮的收缩动画
 	mDelClospAnim = ValueAnimator.ofFloat(0, 1);
@@ -288,14 +250,9 @@ public class ShopCartView extends View {
 	    @Override
 	    public void onAnimationEnd(Animator animation) {
 		//减少按钮的收缩动画结束后开启提示语扩展动画
-		if (mCount == 0) {
-		    if (mHintExpandAnim != null && !mHintExpandAnim.isRunning()) {
-			mHintExpandAnim.start();
-		    }
-		}
+		if (mCount == 0) if (mHintExpandAnim != null && !mHintExpandAnim.isRunning()) mHintExpandAnim.start();
 	    }
 	});
-
 	mHintTextBound = new Rect();
 	mHintTextPaint.getTextBounds(mHintText, 0, mHintText.length(), mHintTextBound);
 	mReplenshTextBound = new Rect();
@@ -307,7 +264,6 @@ public class ShopCartView extends View {
 	TypedArray ta = context.getTheme()
 			       .obtainStyledAttributes(attrs, R.styleable.ShopCartView, defStyleAttr, 0);
 	int indexCount = ta.getIndexCount();
-
 	for (int i = 0; i < indexCount; i++) {
 	    int attr = ta.getIndex(i);
 	    if (attr == R.styleable.ShopCartView_isAddFillMode) {
@@ -408,18 +364,14 @@ public class ShopCartView extends View {
     }
 
     private Region getRegion() {
-	if (mRegion == null) {
-	    mRegion = new Region();
-	}
+	if (mRegion == null) mRegion = new Region();
 	mRegion.set(mLeft, mTop, mWidth - getPaddingRight(), mHeight - getPaddingBottom());
 	return mRegion;
     }
 
     @NonNull
     private RectF getRectF() {
-	if (mRectF == null) {
-	    mRectF = new RectF();
-	}
+	if (mRectF == null) mRectF = new RectF();
 	mRectF.left = mLeft + (mWidth - mRadius * 2 - mCircleStrokeWidth * 2) * mHintAnimatorFraction;
 	mRectF.top = mTop;
 	mRectF.right = mLeft + mWidth;
@@ -432,27 +384,17 @@ public class ShopCartView extends View {
 	int action = event.getAction();
 	float x = event.getX();
 	float y = event.getY();
-	if (isReplenishText) {
-	    return true;
-	}
-
+	if (isReplenishText) return true;
 	if (mHintExpandAnim.isRunning() || mHintClospAnim.isRunning() || mDelExpandAnim
-		.isRunning() || mDelClospAnim.isRunning())
-	{
-	    //如果当前有动画在运行就不能有其他操作
-	    return true;
-	}
-
+		.isRunning() || mDelClospAnim.isRunning()) return true;//如果当前有动画在运行就不能有其他操作
 	switch (action) {
 	    case MotionEvent.ACTION_DOWN:
 		if (mCount == 0) {
 		    addClick();
 		    return true;
 		} else {
-
 		    if (mAddRegion.contains((int) x, (int) y)) {
 			addClick();
-
 			return true;
 		    } else if (mDelRegion.contains((int) x, (int) y)) {
 			delClick();
@@ -460,10 +402,9 @@ public class ShopCartView extends View {
 		    }
 		}
 		break;
-	    case MotionEvent.ACTION_MOVE:
-		break;
-	    case MotionEvent.ACTION_UP:
-		break;
+	    case MotionEvent.ACTION_MOVE:break;
+	    case MotionEvent.ACTION_UP:break;
+		default:break;
 	}
 	return super.onTouchEvent(event);
     }
@@ -489,8 +430,7 @@ public class ShopCartView extends View {
 	    return;
 	}
 
-	if (!mIgnoreHintArea && showHintMode) {
-	    //绘制提示语背景
+	if (!mIgnoreHintArea && showHintMode) {//绘制提示语背景
 	    mHintPaint.setColor(mHintBgColor);
 	    RectF rectF = getRectF();
 	    canvas.drawRoundRect(rectF, mHintBgRoundValue, mHintBgRoundValue, mHintPaint);
@@ -507,13 +447,8 @@ public class ShopCartView extends View {
 	    int animOffsetMax = (int) (mRadius * 2 + mCircleStrokeWidth * 2 + mGapBetweenCircle);
 	    int alphaMax = 255;
 	    int animRotateMax = 360;
-
-	    //绘制删除按钮
-	    if (mCount > 0) {
-		mDelPaint.setColor(mDelEnableBgColor);
-	    } else {
-		mDelPaint.setColor(mDelDisableBgColor);
-	    }
+	    if (mCount > 0) mDelPaint.setColor(mDelEnableBgColor);//绘制删除按钮
+	    else mDelPaint.setColor(mDelDisableBgColor);
 	    mDelPaint.setStrokeWidth(mCircleStrokeWidth);
 	    mDelPaint.setAlpha((int) (alphaMax * (1 - mDelAnimatorFraction)));
 	    mDelPath.reset();
@@ -524,21 +459,16 @@ public class ShopCartView extends View {
 	    mDelPath.addCircle(mLeft + mRadius + mCircleStrokeWidth, mTop + mRadius + mCircleStrokeWidth, mRadius, Path.Direction.CW);
 	    mDelRegion.setPath(mDelPath, getRegion());
 	    canvas.drawPath(mDelPath, mDelPaint);
-	    if (mCount > 0) {
-		mDelPaint.setColor(mDelEnableFgColor);
-	    } else {
-		mDelPaint.setColor(mDelDisableFgColor);
-	    }
+	    if (mCount > 0) mDelPaint.setColor(mDelEnableFgColor);
+	    else mDelPaint.setColor(mDelDisableFgColor);
 	    mDelPaint.setStrokeWidth(mLineWidth);
 	    //绘制删除按钮中的横线
 	    canvas.drawLine(mLeft + mCircleStrokeWidth + mRadius / 2, mTop + mCircleStrokeWidth + mRadius, mLeft + mCircleStrokeWidth + mRadius / 2 + mRadius, mTop + mCircleStrokeWidth + mRadius, mDelPaint);
 	    canvas.restore();
-
 	    //绘制数量文本
 	    //获取数量文本的最大位移距离
 	    mNumPaint.setAlpha((int) (alphaMax * (1 - mDelAnimatorFraction)));
 	    canvas.save();
-
 	    canvas.translate((animOffsetMax - mRadius * 2 - mCircleStrokeWidth * 2 - mGapBetweenCircle / 2 + mNumPaint
 		    .measureText(mCount + "") / 2) * mDelAnimatorFraction + mLeft + mRadius * 2 + mCircleStrokeWidth * 2 + mGapBetweenCircle / 2 - mNumPaint
 		    .measureText(mCount + "") / 2, 0);
@@ -549,24 +479,16 @@ public class ShopCartView extends View {
 	    canvas.restore();
 
 	    //绘制添加按钮
-	    if (mCount < 100) {
-		mAddPaint.setColor(mAddEnableBgColor);
-	    } else {
-		mAddPaint.setColor(mAddDisableBgColor);
-	    }
+	    if (mCount < 100) mAddPaint.setColor(mAddEnableBgColor);
+	    else mAddPaint.setColor(mAddDisableBgColor);
 	    mAddPaint.setStrokeWidth(mCircleStrokeWidth);
 	    int left = (int) (mLeft + animOffsetMax + mCircleStrokeWidth);
 	    mAddPath.reset();
 	    mAddPath.addCircle(left + mRadius, mTop + mCircleStrokeWidth + mRadius, mRadius, Path.Direction.CW);
 	    mAddRegion.setPath(mAddPath, getRegion());
 	    canvas.drawPath(mAddPath, mAddPaint);
-
-	    //绘制添加按钮间的“+”
-	    if (mCount < 100) {
-		mAddPaint.setColor(mAddEnableFgColor);
-	    } else {
-		mAddPaint.setColor(mAddDisableFgColor);
-	    }
+	    if (mCount < 100) mAddPaint.setColor(mAddEnableFgColor);//绘制添加按钮间的“+”
+	    else mAddPaint.setColor(mAddDisableFgColor);
 	    mAddPaint.setStrokeWidth(mLineWidth);
 	    canvas.drawLine(left + mRadius / 2, mTop + mCircleStrokeWidth + mRadius, left + mRadius / 2 + mRadius, mTop + mCircleStrokeWidth + mRadius, mAddPaint);
 	    canvas.drawLine(left + mRadius, mTop + mCircleStrokeWidth + mRadius / 2, left + mRadius, mTop + mCircleStrokeWidth + mRadius / 2 + mRadius, mAddPaint);
@@ -579,35 +501,30 @@ public class ShopCartView extends View {
 	int widthMode = MeasureSpec.getMode(widthMeasureSpec);
 	int height = MeasureSpec.getSize(heightMeasureSpec);
 	int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-
 	switch (widthMode) {
-	    case MeasureSpec.EXACTLY:
-		break;
+	    case MeasureSpec.EXACTLY:break;
 	    case MeasureSpec.AT_MOST:
 		int defaultWidth = (int) (getPaddingLeft() + mRadius * 2 + mGapBetweenCircle + mRadius * 2 + mCircleStrokeWidth * 4 + getPaddingRight());
-		width = defaultWidth < width
-			? defaultWidth
-			: width;
+		width = defaultWidth < width ? defaultWidth : width;
 		break;
 	    case MeasureSpec.UNSPECIFIED:
 		defaultWidth = (int) (getPaddingLeft() + mRadius * 2 + mGapBetweenCircle + mRadius * 2 + mCircleStrokeWidth * 4 + getPaddingRight());
 		width = defaultWidth;
 		break;
+		default:break;
 	}
 
 	switch (heightMode) {
-	    case MeasureSpec.EXACTLY:
-		break;
+	    case MeasureSpec.EXACTLY:break;
 	    case MeasureSpec.AT_MOST:
 		int defaultHeight = (int) (getPaddingTop() + mRadius * 2 + mCircleStrokeWidth * 2 + getPaddingBottom());
-		height = defaultHeight < height
-			 ? defaultHeight
-			 : height;
+		height = defaultHeight < height ? defaultHeight : height;
 		break;
 	    case MeasureSpec.UNSPECIFIED:
 		defaultHeight = (int) (getPaddingTop() + mRadius * 2 + mCircleStrokeWidth * 2 + getPaddingBottom());
 		width = defaultHeight;
 		break;
+		default:break;
 	}
 
 	setMeasuredDimension(width, height);
@@ -620,17 +537,12 @@ public class ShopCartView extends View {
 	    mCount--;
 	    if (mCount == 0) {
 		cancelAnim();
-		if (mDelClospAnim != null && !mDelClospAnim.isRunning()) {
-		    mDelClospAnim.start();
-		}
+		if (mDelClospAnim != null && !mDelClospAnim.isRunning()) mDelClospAnim.start();
 	    } else {
 		mDelAnimatorFraction = 0;
 		invalidate();
 	    }
-
-	    if (mOnAddOrDelListner != null) {
-		mOnAddOrDelListner.onDelClick(mCount);
-	    }
+	    if (mOnAddOrDelListner != null) mOnAddOrDelListner.onDelClick(mCount);
 	} else {
 
 	}
@@ -641,21 +553,13 @@ public class ShopCartView extends View {
 	    mCount++;
 	    if (mCount == 1) {
 		cancelAnim();
-		if (mHintClospAnim != null && !mHintClospAnim.isRunning()) {
-		    mHintClospAnim.start();
-		}
+		if (mHintClospAnim != null && !mHintClospAnim.isRunning()) mHintClospAnim.start();
 	    } else {
 		mDelAnimatorFraction = 0;
 		invalidate();
 	    }
-
-	    if (mOnAddOrDelListner != null) {
-		mOnAddOrDelListner.onAddClick(mCount);
-	    }
-
-	    if (isBind) {
-		bindToCartAnim();
-	    }
+	    if (mOnAddOrDelListner != null) mOnAddOrDelListner.onAddClick(mCount);
+	    if (isBind) bindToCartAnim();
 	} else {
 
 	}
@@ -897,11 +801,9 @@ public class ShopCartView extends View {
     }
 
     public void bindToCartAnim() {
-	//创建购物车小球
-	ImageView target = new ImageView(context);
+	ImageView target = new ImageView(context);//创建购物车小球
 	target.setImageResource(R.drawable.traint);
-	//获取startView和endView在屏幕的坐标
-	int startX = getLocation(startView, 0);
+	int startX = getLocation(startView, 0);//获取startView和endView在屏幕的坐标
 	int startY = getLocation(startView, 1);
 	int endX = getLocation(endView, 0);
 	int endY = getLocation(endView, 1);
@@ -923,10 +825,8 @@ public class ShopCartView extends View {
 	    startX = startX + startView.getWidth() / 2 - intrinsicWidth / 2;
 	    startY = startY + startView.getHeight() / 2 - intrinsicHeight / 2;
 	}
-
 	endX = endX + endView.getWidth() / 2 - intrinsicWidth / 2;
 	endY = endY + endView.getHeight() / 2 - intrinsicHeight / 2;
-
 	//将购物车小球加载入窗体相应位置
 	traintImgToWindow(context, startX, startY, target);
 	//执行购物车抛物线动画
@@ -938,7 +838,6 @@ public class ShopCartView extends View {
 	//抛物线动画分解为x轴匀速移动和y轴加速移动
 	ObjectAnimator translateX = ObjectAnimator.ofFloat(target, "translationX", endX - startX);
 	translateX.setInterpolator(new LinearInterpolator());
-
 	ObjectAnimator translateY = ObjectAnimator.ofFloat(target, "translationY", endY - startY);
 	translateY.setInterpolator(new AccelerateInterpolator());
 	translateY.addListener(new AnimatorListenerAdapter() {
@@ -958,13 +857,10 @@ public class ShopCartView extends View {
 	//缩放动画
 	ObjectAnimator scaleX = ObjectAnimator.ofFloat(target, "scaleX", 1f, 0.4f);
 	ObjectAnimator scaleY = ObjectAnimator.ofFloat(target, "scaleY", 1f, 0.4f);
-
-
 	AnimatorSet animatorSet = new AnimatorSet();
 	animatorSet.playTogether(translateX, translateY,scaleX,scaleY);
 	animatorSet.setDuration(500);
 	animatorSet.start();
-
     }
 
     /**
@@ -982,7 +878,6 @@ public class ShopCartView extends View {
 	layout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 	layout.setLayoutParams(layoutParams);
 	rootView.addView(layout);
-
 	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 	params.leftMargin = startX;
 	params.topMargin = startY;
@@ -1008,7 +903,6 @@ public class ShopCartView extends View {
 
     public interface OnAddOrDelListner {
 	void onAddClick(int count);
-
 	void onDelClick(int count);
     }
 }
